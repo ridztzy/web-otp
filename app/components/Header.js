@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { API_BASE_URL } from "../config/constants";
 import JamSekarang from "./jam";
 
 export default function Header({ setSidebarOpen }) {
@@ -25,7 +26,7 @@ export default function Header({ setSidebarOpen }) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
       
-      const response = await fetch("http://localhost:3001/health", {
+      const response = await fetch(`${API_BASE_URL}/health`, {
         signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +102,7 @@ export default function Header({ setSidebarOpen }) {
     setIsRestarting(true);
     setRestartMessage(null);
     try {
-      const res = await fetch('http://localhost:3001/api/restart', {
+      const res = await fetch(`${API_BASE_URL}/api/restart`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
