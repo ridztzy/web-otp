@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { API_BASE_URL, SOCKET_URL } from '../config/constants';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Sidebar from '../components/Sidebar';
@@ -73,7 +74,7 @@ export default function ClientDashboardContent({ session }) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
       
-      const res = await fetch('http://localhost:3001/api/status', {
+      const res = await fetch(`${API_BASE_URL}/api/status`, {
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -120,7 +121,7 @@ export default function ClientDashboardContent({ session }) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
       
-      const res = await fetch('http://localhost:3001/api/whatsapp/qrcode', {
+      const res = await fetch(`${API_BASE_URL}/api/whatsapp/qrcode`, {
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -153,7 +154,7 @@ export default function ClientDashboardContent({ session }) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
       
-      const res = await fetch('http://localhost:3001/api/statistik', {
+      const res = await fetch(`${API_BASE_URL}/api/statistik`, {
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -189,7 +190,7 @@ export default function ClientDashboardContent({ session }) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
       
-      const res = await fetch('http://localhost:3001/api/logs?limit=4', {
+      const res = await fetch(`${API_BASE_URL}/api/logs?limit=4`, {
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -215,7 +216,7 @@ export default function ClientDashboardContent({ session }) {
     updateLoading('disconnect', true);
     
     try {
-      const res = await fetch('http://localhost:3001/api/whatsapp/disconnect', { 
+      const res = await fetch(`${API_BASE_URL}/api/whatsapp/disconnect`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -237,7 +238,7 @@ export default function ClientDashboardContent({ session }) {
     updateLoading('refresh', true);
     
     try {
-      const res = await fetch('http://localhost:3001/api/whatsapp/refresh-qrcode', { 
+      const res = await fetch(`${API_BASE_URL}/api/whatsapp/refresh-qrcode`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -273,7 +274,7 @@ export default function ClientDashboardContent({ session }) {
   useEffect(() => {
     if (!isOnline) return;
     
-    const socketIo = io('http://localhost:3001', {
+    const socketIo = io(SOCKET_URL, {
       transports: ['websocket', 'polling'],
       timeout: 10000,
       reconnectionDelay: 2000,

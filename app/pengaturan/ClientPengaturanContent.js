@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { API_BASE_URL } from '../config/constants'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Sidebar from '../components/Sidebar'
@@ -15,7 +16,7 @@ function PengaturanForm() {
   useEffect(() => {
     async function fetchSettings() {
       setLoading(true)
-      const res = await fetch('http://localhost:3001/api/settings')
+      const res = await fetch(`${API_BASE_URL}/api/settings`)
       const data = await res.json()
       setWebhookUrl(data.webhook_url || '')
       setApiKey(data.api_key || '')
@@ -26,7 +27,7 @@ function PengaturanForm() {
 
   async function handleGenerateApiKey() {
     setLoading(true)
-    const res = await fetch('http://localhost:3001/api/settings/generate-apikey', { method: 'POST' })
+    const res = await fetch(`${API_BASE_URL}/api/settings/generate-apikey`, { method: 'POST' })
     const data = await res.json()
     setApiKey(data.api_key)
     setLoading(false)
@@ -37,7 +38,7 @@ function PengaturanForm() {
   async function handleSubmit(e) {
     e.preventDefault()
     setSaving(true)
-    await fetch('http://localhost:3001/api/settings', {
+    await fetch(`${API_BASE_URL}/api/settings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ webhook_url: webhookUrl, api_key: apiKey }),

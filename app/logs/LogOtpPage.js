@@ -1,6 +1,7 @@
 
 "use client"
 import { useState, useEffect } from 'react'
+import { API_BASE_URL } from '../config/constants'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Sidebar from '../components/Sidebar'
@@ -178,7 +179,7 @@ export default function LogOtpPage() {
     if (filters.to) params.append('to', filters.to)
     params.append('page', filters.page)
     params.append('limit', filters.limit)
-    const res = await fetch(`http://localhost:3001/api/logs?${params.toString()}`)
+    const res = await fetch(`${API_BASE_URL}/api/logs?${params.toString()}`)
     const data = await res.json()
     setLogs(data.data)
     setPagination(data.pagination)

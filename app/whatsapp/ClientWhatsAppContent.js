@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { API_BASE_URL } from '../config/constants'
 import io from 'socket.io-client'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -14,7 +15,7 @@ function WhatsAppAccountCard() {
 
   useEffect(() => {
     // Koneksi ke Socket.IO backend
-    const socketIo = io('http://localhost:3001')
+    const socketIo = io(`${API_BASE_URL}`)
     setSocket(socketIo)
 
     socketIo.on('whatsapp-status', (data) => {
@@ -32,19 +33,19 @@ function WhatsAppAccountCard() {
     setLoading(true)
     try {
       // Fetch status
-      const statusRes = await fetch('http://localhost:3001/api/whatsapp/status')
+      const statusRes = await fetch(`${API_BASE_URL}/api/whatsapp/status`)
       const statusData = await statusRes.json()
       setStatus(statusData)
 
       // Fetch device info jika terhubung
       if (statusData.connected) {
-        const deviceRes = await fetch('http://localhost:3001/api/whatsapp/device-info')
+        const deviceRes = await fetch(`${API_BASE_URL}/api/whatsapp/device-info`)
         const deviceData = await deviceRes.json()
         setDeviceInfo(deviceData)
       }
 
       // Fetch login history
-      const historyRes = await fetch('http://localhost:3001/api/whatsapp/login-history')
+      const historyRes = await fetch(`${API_BASE_URL}/api/whatsapp/login-history`)
       const historyData = await historyRes.json()
       setLoginHistory(historyData.slice(0, 5)) // Ambil 5 terakhir
     } catch (error) {
@@ -54,7 +55,7 @@ function WhatsAppAccountCard() {
   }
 
   async function handleDisconnect() {
-    await fetch('http://localhost:3001/api/whatsapp/disconnect', { method: 'POST' })
+    await fetch(`${API_BASE_URL}/api/whatsapp/disconnect`, { method: 'POST' })
     fetchAccountInfo()
   }
 
