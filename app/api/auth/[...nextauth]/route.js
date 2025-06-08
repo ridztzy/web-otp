@@ -6,32 +6,77 @@ export const authOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "jsmith@example.com" },
+        email: { label: "Email", type: "text", placeholder: "email@example.com" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (credentials.email === "test@example.com" && credentials.password === "password123") {
-          return { id: "1", name: "User Demo", email: "test@example.com" };
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          });
+
+          const data = await response.json();
+          
+          // Log untuk debugging
+          console.log('Response status:', response.status);
+          console.log('Response data:', data);
+
+          // Jika login gagal, return null (rekomendasi NextAuth)
+          if (!response.ok) {
+            console.log('Login failed:', data.error || data.message);
+            return null;
+          }
+
+          // Pastikan data user ada
+          if (!data.user) {
+            console.log('No user data in response');
+            return null;
+          }
+
+          // Return data untuk session
+          return {
+            id: data.user.id,
+            name: data.user.nama,
+            email: data.user.email,
+            token: data.token
+          };
+
+        } catch (error) {
+          console.error('Auth error:', error);
+          return null; // Return null daripada throw error
         }
-        return null;
       },
     }),
   ],
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        // Menyimpan data tambahan ke token
+        token.id = user.id;
+        token.accessToken = user.token; // jika menggunakan token dari backend
+      }
       return token;
     },
     async session({ session, token }) {
-      if (token) session.user.id = token.id;
+      // Menyimpan data dari token ke session
+      session.user.id = token.id;
+      session.accessToken = token.accessToken; // jika menggunakan token dari backend
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/auth/signin',
+    error: '/auth/error',
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
