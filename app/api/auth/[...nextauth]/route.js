@@ -22,35 +22,36 @@ export const authOptions = {
             }),
           });
 
-          const data = await response.json();
+          const result = await response.json();
           
           // Log untuk debugging
           console.log('Response status:', response.status);
-          console.log('Response data:', data);
+          console.log('Response data:', result);
 
-          // Jika login gagal, return null (rekomendasi NextAuth)
+          // Jika login gagal
           if (!response.ok) {
-            console.log('Login failed:', data.error || data.message);
+            console.log('Login failed:', result.message);
             return null;
           }
 
           // Pastikan data user ada
-          if (!data.user) {
+          if (!result.data?.user) {
             console.log('No user data in response');
             return null;
           }
 
-          // Return data untuk session
+          // Return data untuk session sesuai struktur response
           return {
-            id: data.user.id,
-            name: data.user.nama,
-            email: data.user.email,
-            token: data.token
+            id: result.data.user.id,
+            name: result.data.user.name,
+            email: result.data.user.email,
+            token: result.data.token,
+            role: result.data.user.role
           };
 
         } catch (error) {
           console.error('Auth error:', error);
-          return null; // Return null daripada throw error
+          return null;
         }
       },
     }),
